@@ -1,0 +1,3 @@
+kli - 2017-03-30
+    Set up SVG for heatmap
+    Began work on d3 integration
