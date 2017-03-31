@@ -8,7 +8,7 @@ app = Flask(__name__)
 def root():
     counts = process.get_state_counts()
     print counts
-    return render_template('index.html',
+    return render_template("index.html",
                            counts = counts,
                            max_count = max([state['count'] for state in counts]))
 
