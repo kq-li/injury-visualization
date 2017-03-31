@@ -1,14 +1,17 @@
-#!user/bin/python
-
-import csv
-from flask import Flask render_template, request, session, url_for, redirect
+from data import process
+from flask import Flask, render_template, request, session, url_for, redirect
+import json
 
 app = Flask(__name__)
 
-app.route("/", methods = ["POST", "GET"])
+@app.route('/')
 def root():
-    render_teplate("route.html")
+    counts = process.get_state_counts()
+    print counts
+    return render_template('index.html',
+                           counts = counts,
+                           max_count = max([state['count'] for state in counts]))
 
-if __name__ == "main":
+if __name__ == '__main__':
     app.debug = True
     app.run()

@@ -1,2 +1,4 @@
 *.db
 .emacs.*
+*.pyc
+*/*.pyc

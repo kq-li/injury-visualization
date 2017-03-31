@@ -17,9 +17,9 @@ html, body {
 }
 
 .land {
-    fill: #CCCCCC;
+    fill: #FFFFFF;
     fill-opacity: 1;
-    stroke: white;
+    stroke: black;
     stroke-opacity: 1;
     stroke-width: 0.5;
 }
