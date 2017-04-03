@@ -6,12 +6,18 @@ app = Flask(__name__)
 
 @app.route('/')
 def root():
-    counts = process.get_state_counts()
-    print counts
-    return render_template("index.html",
-                           counts = counts,
-                           max_count = max([state['count'] for state in counts]))
+    return render_template("index.html")
 
+@app.route('/data/injury_fractions', methods = ['POST'])
+def injury_percents():
+    fractions = process.get_injury_fractions()
+    return json.dumps(fractions.items())
+
+@app.route('/data/average_leave', methods = ['POST'])
+def average_leave():
+    counts = process.get_average_leave()
+    return json.dumps(counts.items())
+    
 if __name__ == '__main__':
     app.debug = True
     app.run()
