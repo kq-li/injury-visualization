@@ -17,23 +17,25 @@
           { label: 'Cantaloupe', count: 30 },
           { label: 'Dijkstra', count: 40 }
         ];
-
+        
+        var x = 500;
+        var y = 300;
         var width = 200;
-        var height = 200;
-        var radius = Math.min(width, height) / 2;
+        var radius = width / 2;
         var donutWidth = 25;                            // NEW
 
         var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
         var svg = d3.select('#chart')
           .append('svg')
-          .attr('width', width)
-          .attr('height', height)
+          .attr('width', 800)
+          .attr('height', 600)
+          .attr("id", "svg")
           .append('g')
-          .attr('transform', 'translate(' + (width / 2) +
-            ',' + (height / 2) + ')');
+          .attr('transform', 'translate(' + x +
+            ',' + y + ')');
 
-        var arc = d3.arc()
+        var ar = d3.arc()
           .innerRadius(radius - donutWidth)             // UPDATED
           .outerRadius(radius);
 
@@ -45,11 +47,45 @@
           .data(pie(dataset))
           .enter()
           .append('path')
-          .attr('d', arc)
+          .attr('d', ar)
+          .attr('state', 1)
           .attr('fill', function(d, i) {
             return color(d.data.label);
           });
+          
+        var i= 0;
+        for(; i < document.getElementsByTagName("path").length ; i++){
 
+        document.getElementsByTagName("path")[i].addEventListener("mouseover", function(e){
+            thickenPortion(this);
+        });
+        }
+        
+        function m(element){
+            //console.log("dude");
+            element.setAttribute("stroke-width", 0); 
+            element.setAttribute("state", 1);
+        }
+            
+        function thickenPortion(element){
+            if(element.getAttribute("state") == 1){
+        var a = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        a.setAttribute("d", element.getAttribute("d"));
+        a.setAttribute("stroke-width", 10);
+        a.setAttribute("state", 2);
+        a.setAttribute("stroke",element.getAttribute("fill"));
+        a.setAttribute("fill",element.getAttribute("fill"));
+        a.addEventListener("mouseover", function(e){
+            thickenPortion(this);
+        });
+        a.addEventListener("mouseout", function(e){
+            m(this);
+        });
+        document.getElementsByTagName("g")[0].removeChild(element);
+        document.getElementsByTagName("g")[0].appendChild(a);
+        
+            }
+          }
       })(window.d3);
     </script>
   </body>
