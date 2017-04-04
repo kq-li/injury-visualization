@@ -10,10 +10,7 @@ html, body {
 #heatmap {
     width: auto;
     height: 76vh;
-    //border: 2px solid black;
-    margin-top: 12vh;
-    margin-left: 5vw;
-    padding: 20px;
+    margin: 6vh 0;
     box-sizing: border-box;
 }
 
@@ -22,14 +19,12 @@ html, body {
     fill-opacity: 1;
     stroke: black;
     stroke-opacity: 1;
-    stroke-width: 0.5;
+    stroke-width: 1;
 }
 
-.tooltip{
-    background:black;
-    color:white;
-    padding:5px;
-    box-shadow:0 0 10px 0 rgba(0, 0, 0, 1);
-    border-radius:10px;
-    opacity:0;
+#tooltip {
+    stroke: black;
+    stroke-width: 1;
+    fill: white;
+    padding: 5px;
 }

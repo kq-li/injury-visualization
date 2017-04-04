@@ -1,7 +1,7 @@
-var heatmap = document.getElementById('heatmap');
-var bbox = heatmap.getBBox();
-var viewBox = bbox.x + ' ' + bbox.y + ' ' + bbox.width + ' ' + bbox.height;
-heatmap.setAttribute('viewBox', viewBox);
+var heatmap = $('#heatmap');
+var heatmapBBox = heatmap[0].getBBox();
+var viewBox = heatmapBBox.x + ' ' + heatmapBBox.y + ' ' + heatmapBBox.width + ' ' + heatmapBBox.height;
+heatmap.attr('viewBox', viewBox);
 
 var states = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
 
@@ -37,49 +37,124 @@ $(document).ready(function () {
     loadHeatmap($('#heatmap-data').val());
 });
 
+var tooltip = $(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+var tooltipRect = $(document.createElementNS('http://www.w3.org/2000/svg', 'rect')).attr({
+    id: 'tooltip',
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 50,
+    rx: 10,
+    ry: 10
+});
+var tooltipText = $(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+var TOOLTIP_SPACING = 20;
+var TOOLTIP_PADDING = 5;
 
-//HOVER FOR STATES//
-var statePaths = document.getElementsByTagName('path');
+tooltip.append(tooltipRect).append(tooltipText);
+tooltip.hide();
+heatmap.append(tooltip);
 
-for (var i = 0; i < statePaths.length; i++){
-    statePaths[i].addEventListener("mouseover", function (e) {
-        this.style.stroke = 'red';
-	this.lineWidth = '3';
-	showTip("PLACEHOLDER");
+$('#heatmap').on('mousemove', function (e) {
+    tooltipRect.attr({
+        x: e.offsetX + heatmapBBox.x + TOOLTIP_SPACING,
+        y: e.offsetY + heatmapBBox.y + TOOLTIP_SPACING
+    });
+
+    tooltipText.attr({
+        x: e.offsetX + heatmapBBox.x + TOOLTIP_SPACING + TOOLTIP_PADDING,
+        y: e.offsetY + heatmapBBox.y + tooltipText[0].getBBox().height
+            + TOOLTIP_SPACING + TOOLTIP_PADDING
+    });
+});
+
+var activeStates = [null, null];
+
+function showTooltip(message) {
+    //console.log('showing tooltip');
+    tooltipText.text(message);
+    tooltipRect.attr({
+        width: tooltipText[0].getBBox().width + 2 * TOOLTIP_PADDING,
+        height: tooltipText[0].getBBox().height + 2 * TOOLTIP_PADDING
+    });
+    tooltip.show();
+};
+
+function hideTooltip() {
+    //console.log('hiding tooltip');
+    tooltip.hide();
+}
+
+function isSelected(state) {
+    return activeStates.indexOf(state) != -1;
+}
+
+function hoverState(state) {
+    console.log('hover' + state.getAttribute('id'));
+    state.style['z-index'] = 1;
+    state.style['stroke-width'] = 3;
+	showTooltip('PLACEHOLDER\ntest');
+}
+
+function unhoverState(state) {
+    console.log('unhover');
+    //console.log(state);
+    state.style['z-index'] = 0;
+    state.style['stroke-width'] = 1;
+	hideTooltip();
+}
+
+function selectLeftState(state) {
+    console.log('selected');
+    state.style['z-index'] = 2;
+    state.style['stroke-width'] = 3;
+    activeStates[0] = state;
+}
+
+function deselectLeftState(state) {
+    console.log('deselected');
+    state.style['z-index'] = 0;
+    state.style['stroke-width'] = 1;
+    activeStates[0] = null;
+}
+
+function selectRightState(state) {
+    state.style['z-index'] = 2;
+    state.style['stroke-width'] = 3;
+    activeStates[1] = state;
+}
+
+function deselectRightState(state) {
+    state.style['z-index'] = 0;
+    state.style['stroke-width'] = 1;
+    activeStates[1] = null;
+}
+
+$('path').each(function (i, state) {
+    state.addEventListener('mouseover', function (e) {
+        hoverState(this);
     });
     
-    statePaths[i].addEventListener("mouseout", function (e) {
-        this.style.stroke = 'black';
-	this.lineWidth = '3';
-	hideTip();
+    state.addEventListener('mouseout', function (e) {
+        if (!isSelected(this)) {
+            unhoverState(this);
+        }
     });
 
-    var showTip = function(message){    
-	var tip = document.createElement("span");
-	tip.className = "tooltip";
-	tip.id = "tip";
-	tip.innerHTML = message;
-	div.appendChild(tip);
-	tip.style.opacity="0";
-	var intId = setInterval(function(){
-            newOpacity = parseFloat(tip.style.opacity)+0.1;
-            tip.style.opacity = newOpacity.toString();
-            if(tip.style.opacity == "1"){
-		clearInterval(intId);
+    state.addEventListener('mousedown', function (e) {
+        console.log('click: ' + e.offsetX + ' ' + e.offsetY);
+        if (e.which == 1) {
+            if (activeStates[0]) {
+                deselectLeftState(activeStates[0]);
             }
-	}, fadeSpeed);
-    };
+            
+            selectLeftState(this);
+        } else if (e.which == 3) {
+            if (activeStates[1]) {
+                deselectRightState(activeStates[1]);
+            }
 
-    var hideTip = function(){
-	var tip = document.getElementById("tip");
-	var intId = setInterval(function(){
-            newOpacity = parseFloat(tip.style.opacity)-0.1;
-            tip.style.opacity = newOpacity.toString();
-            if(tip.style.opacity == "0"){
-		clearInterval(intId);
-		tip.remove();
-            }
-	}, fadeSpeed);
-	tip.remove();
-    };
-}
+            selectRightState(this);
+        }
+    });
+});
