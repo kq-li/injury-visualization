@@ -73,10 +73,12 @@ var activeStates = [null, null];
 function showTooltip(message) {
     //console.log('showing tooltip');
     tooltipText.text(message);
+
     tooltipRect.attr({
         width: tooltipText[0].getBBox().width + 2 * TOOLTIP_PADDING,
         height: tooltipText[0].getBBox().height + 2 * TOOLTIP_PADDING
     });
+
     tooltip.show();
 };
 
