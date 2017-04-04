@@ -49,7 +49,7 @@ var tooltipRect = $(document.createElementNS('http://www.w3.org/2000/svg', 'rect
 });
 var tooltipText = $(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
 var TOOLTIP_SPACING = 20;
-var TOOLTIP_PADDING = 5;
+var TOOLTIP_PADDING = 10;
 
 tooltip.append(tooltipRect).append(tooltipText);
 tooltip.hide();
@@ -63,7 +63,7 @@ $('#heatmap').on('mousemove', function (e) {
 
     tooltipText.attr({
         x: e.offsetX + heatmapBBox.x + TOOLTIP_SPACING + TOOLTIP_PADDING,
-        y: e.offsetY + heatmapBBox.y + tooltipText[0].getBBox().height
+        y: e.offsetY + heatmapBBox.y + tooltipText[0].getBBox().height * 0.75
             + TOOLTIP_SPACING + TOOLTIP_PADDING
     });
 });
