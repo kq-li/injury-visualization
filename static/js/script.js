@@ -44,9 +44,42 @@ var statePaths = document.getElementsByTagName('path');
 for (var i = 0; i < statePaths.length; i++){
     statePaths[i].addEventListener("mouseover", function (e) {
         this.style.stroke = 'red';
+	this.lineWidth = '3';
+	showTip("PLACEHOLDER");
     });
     
     statePaths[i].addEventListener("mouseout", function (e) {
         this.style.stroke = 'black';
+	this.lineWidth = '3';
+	hideTip();
     });
+
+    var showTip = function(message){    
+	var tip = document.createElement("span");
+	tip.className = "tooltip";
+	tip.id = "tip";
+	tip.innerHTML = message;
+	div.appendChild(tip);
+	tip.style.opacity="0";
+	var intId = setInterval(function(){
+            newOpacity = parseFloat(tip.style.opacity)+0.1;
+            tip.style.opacity = newOpacity.toString();
+            if(tip.style.opacity == "1"){
+		clearInterval(intId);
+            }
+	}, fadeSpeed);
+    };
+
+    var hideTip = function(){
+	var tip = document.getElementById("tip");
+	var intId = setInterval(function(){
+            newOpacity = parseFloat(tip.style.opacity)-0.1;
+            tip.style.opacity = newOpacity.toString();
+            if(tip.style.opacity == "0"){
+		clearInterval(intId);
+		tip.remove();
+            }
+	}, fadeSpeed);
+	tip.remove();
+    };
 }
