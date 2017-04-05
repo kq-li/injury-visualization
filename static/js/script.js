@@ -329,11 +329,14 @@ function unhoverState(state) {
 }
 
 function selectState(state) {
+    var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7,'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
+    document.getElementById("chart").append(makeDonutChart( data,200, 200, 90, 35)[0]);
     state.style['z-index'] = 2;
     state.style['stroke-width'] = 3;
 }
 
 function deselectState(state) {
+    $('#chart').children().last().remove();
     state.style['z-index'] = 0;
     state.style['stroke-width'] = 1;
 }
