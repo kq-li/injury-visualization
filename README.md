@@ -8,7 +8,7 @@ Overview
 
 
 Usage
-	The user would first be presented with a heatmap of the United States correlating location (state) to number of injuries by default. (This can be changed through a dropdown box to display location vs. average duration of absence, for example.) Additionally, hovering over a state will display additional information about the current state and dataset. Clicking on states will bring up statistics and more graphs below the heatmap. By clicking on two states, the user can see a side-by-side comparison of both states.
+	The user would first be presented with a heatmap of the United States correlating location (state) to number of injuries by default. (This can be changed through a dropdown box to display location vs. average duration of absence, for example.) Additionally, hovering over a state will display additional information about the current state and dataset. Clicking on states will bring up statistics and more graphs below the heatmap. Right click on one state and left click on another to choose the states for comparison. By clicking on two states, the user can see a side-by-side comparison of both states.
 
 
 Technical Details
