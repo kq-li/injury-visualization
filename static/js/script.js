@@ -166,9 +166,9 @@ $('path').each(function (i, state) {
 
 
 
-function post(element) {
+function post(element, state) {
 
-    var input = { 'text' : element.getAttribute("id")};
+    var input = { 'text' : state};
 
     $.ajax({
 	url: '/state',
@@ -183,5 +183,5 @@ function post(element) {
 
 var i;
 for(i = 0 ; i < states.length ; i++){
-    document.getElementById("US-" + states[i]).addEventListener("click", post(document.getElementById("US-" + states[i])));
+    document.getElementById("US-" + states[i]).addEventListener("click", post(document.getElementById("US-" + states[i]), states[i]));
 }

@@ -1,4 +1,4 @@
-from data import process
+from data import process, group
 from flask import Flask, render_template, request, session, url_for, redirect
 import json
 
@@ -17,6 +17,12 @@ def injury_percents():
 def average_leave():
     counts = process.get_average_leave()
     return json.dumps(counts.items())
+
+@app.route("/state", methods = ["GET"])
+def post():
+    data = request.args.get("text")
+    result = group.getStateData(data);   
+    return json.dumps(result)
     
 if __name__ == '__main__':
     app.debug = True
