@@ -79,5 +79,7 @@ html, body {
 }
 
 #compare{
- 
+    padding-top:7vh;
+    height:100vh;
+    border-left:thin solid black
 }
