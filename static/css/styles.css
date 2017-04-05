@@ -6,7 +6,16 @@ html, body {
     box-sizing: border-box;
     background-image:url(topography.png);
 }
-    
+
+#title{
+    font-family: 'Abril Fatface', cursive;
+}
+
+#compareTitle{
+    font-family: 'Palanquin Dark', sans-serif;
+    text-align:center;
+}
+
 #heatmap {
     width: auto;
     height: auto;

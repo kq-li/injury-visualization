@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
-
+	<link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Palanquin+Dark" rel="stylesheet">
         <!-- bootstrap -->
         <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
         <script src="/static/bootstrap/js/jquery.min.js"> </script>
@@ -12,11 +12,19 @@
     </head>
     <body>
 
+      <div class="container">
+	<div class="jumbotron">
+	  <center>
+	    <h1 id="title">Injuries</h1>
+	    <select class="selectpicker" id="heatmap-data">
+              <option value="injury_fractions" selected>Injuries Per 10,000,000 People</option>
+              <option value="average_leave">Average Number of Days Away</option>
+	    </select>
+	  </center>
+	</div>
+      </div>
+
       
-      <select class="selectpicker" id="heatmap-data">
-        <option value="injury_fractions" selected>Injuries Per 10,000,000 People</option>
-        <option value="average_leave">Average Number of Days Away</option>
-      </select>
       <br>
 
 	<div class="row">
@@ -83,8 +91,11 @@
 
 	  </div>
 	  
-          <div class="col-lg-4" id="compare" style="margin-top:-30px;">
-            <h1 style="text-align:center">COMPARE</h1>
+
+        
+
+          <div class="col-lg-4" id="compare">
+            <h1 id="compareTitle">COMPARE</h1>
             
 	    <div id="state1" class="row">
     <div id="chart"></div>
