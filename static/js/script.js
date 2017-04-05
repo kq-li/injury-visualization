@@ -287,7 +287,7 @@ function hoverState(statePath) {
         'stroke-width': 3
     });
 
-    var stateIndex = stateAbvs.indexOf(statePath.attr('id').replace('US-', ''));
+    var stateIndex = stateAbvs.indexOf(statePath.attr('id'));
     var stateName = stateNames[stateIndex];
     var stateInjuries = injuryCounts[stateIndex][1];
     var statePopulation = populations[stateIndex][1];
@@ -319,25 +319,34 @@ function hoverState(statePath) {
 }
 
 function unhoverState(statePath) {
-    statePath.css({
-        'z-index': 0,
-        'stroke-width': 1
-    });
+    if (!isSelected(statePath.attr('id'))) {
+        statePath.css({
+            'z-index': 0,
+            'stroke-width': 1
+        });
+    }
+    
     tooltip.hide();
 }
 
 function selectState(statePath) {
+    var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7,'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
+    
+    $("#state" + (activeStates.indexOf(statePath) + 1)).append(makeDonutChart(data, 200, 200, 90, 35)).append(statePath.attr('id'));
+
     statePath.css({
         'z-index': 2,
         'stroke-width': 3
     });
 
-    $.post('/data/industry_counts/' + statePath.attr('id').replace('US-', ''), function (data) {
-        console.log(data);
-    });
+    //$.post('/data/industry_counts/' + statePath.attr('id'), function (data) {
+        //console.log(data);
+    //});
 }
 
 function deselectState(statePath) {
+    $('#state' + (activeStates.indexOf(statePath) + 1)).text('').children().remove();
+
     statePath.css({
         'z-index': 0,
         'stroke-width': 1
@@ -347,41 +356,38 @@ function deselectState(statePath) {
 $('#heatmap path').each(function (i, statePath) {
     statePath = $(statePath);
 
-    console.log(statePath);
-    
     statePath.on('mouseover', function (e) {
         hoverState(statePath);
     });
     
     statePath.on('mouseout', function (e) {
-        if (!isSelected(statePath)) {
-            unhoverState(statePath);
-        }
+        unhoverState(statePath);
     });
 
     statePath.on('mousedown', function (e) {
-        if (e.which == 1) {
-            if (statePath == activeStates[0]) {
-                deselectState(activeStates[0]);
-            } else {
-                if (activeStates[0]) {
-                    deselectState(activeStates[0]);
-                }
-            
-                selectState(statePath);
-                activeStates[0] = statePath;
+        var activeStateIndex = e.which == 1 ? 0 : 1;
+        var activeState = activeStates[activeStateIndex];
+        var otherStateIndex = (activeStateIndex + 1) % 2;
+        var otherState = activeStates[otherStateIndex];
+        var index = activeStates.indexOf(statePath.attr('id'));
+
+        if (activeStateIndex == index) {
+            deselectState(statePath);
+            activeStates[index] = null;
+        } else {
+            if (index != -1) {
+                deselectState(statePath);
+                activeStates[index] = null;
             }
-        } else if (e.which == 3) {
-            if (statePath == activeStates[1]) {
-                deselectState(activeStates[1]);
-            } else {
-                if (activeStates[1]) {
-                    deselectState(activeStates[1]);
-                }
             
-                selectState(statePath);
-                activeStates[1] = statePath;
+            if (activeState) {
+                deselectState($('#' + activeState));
             }
-        }
+        
+            activeStates[activeStateIndex] = statePath.attr('id');
+            selectState(statePath);
+        } 
+
+        console.log(activeStates);
     });
 });

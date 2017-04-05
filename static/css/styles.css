@@ -92,3 +92,11 @@ body {
     border: 1px solid #555;
     color: #333;
 }
+
+#state1 {
+    height: 50%;
+}
+
+#state2 {
+    height: 50%;
+}
