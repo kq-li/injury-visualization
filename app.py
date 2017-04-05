@@ -27,6 +27,12 @@ def average_days_away():
 def state_industries(state):
     counts = process.get_industry_counts(state)
     return json.dumps(counts.items())
+
+@app.route("/state", methods = ["GET"])
+def post():
+    data = request.args.get("text")
+    result = group.getStateData(data);   
+    return json.dumps(result)
     
 if __name__ == '__main__':
     app.debug = True

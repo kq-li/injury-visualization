@@ -305,3 +305,28 @@ $('path').each(function (i, state) {
         }
     });
 });
+
+
+
+
+
+
+function post(element, state) {
+
+    var input = { 'text' : state};
+
+    $.ajax({
+	url: '/state',
+	type: 'GET',
+	data: input,
+	success: function( d ) {
+	    //input donut js here!!!!!!!!!
+	}
+
+     });
+};
+
+var i;
+for(i = 0 ; i < states.length ; i++){
+    document.getElementById("US-" + states[i]).addEventListener("click", post(document.getElementById("US-" + states[i]), states[i]));
+}

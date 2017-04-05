@@ -1,144 +1,145 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Step 2 - A Basic Donut Chart</title>
-        <style>
-         .slice path {
-             stroke: #fff;
-             stroke-width: 1px;
-         }
+  <head>
+    <meta charset="utf-8">
+    <title>Step 2 - A Basic Donut Chart</title>
+    <style>
+.slice path {
+    stroke: #fff;
+    stroke-width: 1px;
+}
 
-         .textTop {
-             font-family: 'Segoe UI';
-             font-size: 12pt;
-             fill: #bbb;
-         }
+.textTop {
+    font-family: 'Segoe UI';
+    font-size: 12pt;
+    fill: #bbb;
+}
 
-         .textBottom {
-             fill: #444;
-             font-family: 'Segoe UI';
-             font-weight: bold;
-             font-size: 18pt;
-         }
+.textBottom {
+    fill: #444;
+    font-family: 'Segoe UI';
+    font-weight: bold;
+    font-size: 18pt;
+}
 
-         .top {
-             border: 1px solid #bbb;
-             color: #777;
-             font-family: 'Segoe UI';
-             padding: 5px;
-             text-decoration: none;
-         }
+.top {
+    border: 1px solid #bbb;
+    color: #777;
+    font-family: 'Segoe UI';
+    padding: 5px;
+    text-decoration: none;
+}
 
-         .top:hover {
-             border: 1px solid #555;
-             color: #333;
-         }
-        </style>
-    </head>
-    <body style="background:white;">
-        <div id="chart"></div>
-        <script src="d3v3.js"></script>
-        <script>
-         (function(d3) {
-             'use strict';
+.top:hover {
+    border: 1px solid #555;
+    color: #333;
+}
+    </style>
+  </head>
+  <body style="background:white;">
+    <div id="chart"></div>
+    <script src="d3v3.js"></script>
+    <script>
+      (function(d3) {
+        'use strict';
 
-             var w = 400,
-                 h = 400,
-                 r = 180,
-                 inner = 70,
-                 color = d3.scale.category20c();
-
-
-             var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7, 'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
-             ;
-
-             var total = d3.sum(data, function(d) {
-                 return d3.sum(d3.values(d));
-             });
+       var w = 400,
+    h = 400,
+    r = 70,
+    inner = 50,
+    color = d3.scale.category20c();
 
 
-             var vis = d3.select("#chart")
-                         .append("svg:svg")
-                         .data([data])
-                         .attr("width", w)
-                         .attr("height", h)
-                         .append("svg:g")
-                         .attr("transform", "translate(" + r * 1.1 + "," + r * 1.1 + ")")
+var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7, 'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
+;
 
-             var textTop = vis.append("text")
-                              .attr("dy", ".35em")
-                              .style("text-anchor", "middle")
-                              .attr("class", "textTop")
-                              .text( "" )
-                              .attr("y", -10),
-                 textBottom = vis.append("text")
-                                 .attr("dy", ".35em")
-                                 .style("text-anchor", "middle")
-                                 .attr("class", "textBottom")
-                                 .text( "")
-                                 .attr("y", 10);
+var total = d3.sum(data, function(d) {
+    return d3.sum(d3.values(d));
+});
 
-             var arc = d3.svg.arc()
-                         .innerRadius(inner)
-                         .outerRadius(r);
 
-             var arcOver = d3.svg.arc()
-                             .innerRadius(inner + 5)
-                             .outerRadius(r + 5);
-             
-             var pie = d3.layout.pie()
-                         .value(function(d) { return d.value*100/total; });
-             
-             var arcs = vis.selectAll("g.slice")
-                           .data(pie)
-                           .enter()
-                           .append("svg:g")
-                           .attr("class", "slice")
-                           .on("mouseover", function(d) {
-                               d3.select(this).select("path").transition()
-                                 .duration(200)
-                                 .attr("d", arcOver)
-                               
-                               textTop.text(d3.select(this).datum().data.label)
-                                 .attr("y", -10);
-                               textBottom.text((d3.select(this).datum().data.value*100/total).toFixed(2))
-                                         .attr("y", 10);
-                           })
-                           .on("mouseout", function(d) {
-                               d3.select(this).select("path").transition()
-                                 .duration(100)
-                                 .attr("d", arc);
-                               
-                               textTop.text( "" )
-                                      .attr("y", -10);
-                               textBottom.text("");
-                           });
+var vis = d3.select("#chart")
+    .append("svg:svg")
+    .data([data])
+        .attr("width", w)
+        .attr("height", h)
+    .append("svg:g")
+        .attr("transform", "translate(" + r * 1.1 + "," + r * 1.1 + ")")
 
-             arcs.append("svg:path")
-                 .attr("fill", function(d, i) { return color(i); } )
-                 .attr("d", arc);
+var textTop = vis.append("text")
+    .attr("dy", ".35em")
+    .style("text-anchor", "middle")
+    .attr("class", "textTop")
+    .text( "" )
+    .attr("y", -10),
+textBottom = vis.append("text")
+    .attr("dy", ".35em")
+    .style("text-anchor", "middle")
+    .attr("class", "textBottom")
+    .text( "")
+    .attr("y", 10);
 
-             var legend = d3.select("#chart").append("svg")
-                            .attr("class", "legend")
-                            .attr("width", r*2)
-                            .attr("height", r * 2)
-                            .selectAll("g")
-                            .data(data)
-                            .enter().append("g")
-                            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+var arc = d3.svg.arc()
+    .innerRadius(inner)
+    .outerRadius(r);
 
-             legend.append("rect")
-                   .attr("width", 18)
-                   .attr("height", 18)
-                   .style("fill", function(d, i) { return color(i); });
+var arcOver = d3.svg.arc()
+    .innerRadius(inner + 5)
+    .outerRadius(r + 5);
+ 
+var pie = d3.layout.pie()
+    .value(function(d) { return d.value*100/total; });
+ 
+var arcs = vis.selectAll("g.slice")
+    .data(pie)
+    .enter()
+        .append("svg:g")
+            .attr("class", "slice")
+            .on("mouseover", function(d) {
+                d3.select(this).select("path").transition()
+                    .duration(200)
+                    .attr("d", arcOver)
+                
+                textTop.text(d3.select(this).datum().data.label)
+                    .attr("y", -10);
+                textBottom.text((d3.select(this).datum().data.value*100/total).toFixed(2))
+                    .attr("y", 10);
+            })
+            .on("mouseout", function(d) {
+                d3.select(this).select("path").transition()
+                    .duration(100)
+                    .attr("d", arc);
+                
+                textTop.text( "" )
+                    .attr("y", -10);
+                textBottom.text("");
+            });
 
-             legend.append("text")
-                   .attr("x", 24)
-                   .attr("y", 9)
-                   .attr("dy", ".35em")
-                   .text(function(d) { return d.label + " - " + (d.value*100/total).toFixed(2) + "%"; });
-         })(window.d3);
-        </script>
-    </body>
+arcs.append("svg:path")
+    .attr("fill", function(d, i) { return color(i); } )
+    .attr("d", arc);
+
+var legend = d3.select("#chart").append("svg")
+    .attr("class", "legend")
+    .attr("width", r*2)
+    .attr("height", r * 2)
+    .selectAll("g")
+    .data(data)
+    .enter().append("g")
+    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+legend.append("rect")
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", function(d, i) { return color(i); });
+
+legend.append("text")
+    .attr("x", 24)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .text(function(d) { return d.label + " - " + (d.value*100/total).toFixed(2) + "%"; });
+      })(window.d3);
+    </script>
+  </body>
 </html>
+
