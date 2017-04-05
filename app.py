@@ -29,6 +29,13 @@ def state_industries(state):
     print counts
     return json.dumps(counts.items())
 
+@app.route("/state", methods = ["GET"])
+def post():
+    data = request.args.get("text")
+    result = process.get_state_industries(data)
+    print data
+    return json.dumps(result)
+    
 if __name__ == '__main__':
     app.debug = True
     app.run()

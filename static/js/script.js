@@ -336,10 +336,32 @@ function unhoverState(statePath) {
     tooltip.hide();
 }
 
+function p(state) {
+
+    var input = { 'text' : state};
+
+    $.ajax({
+	url: '/state',
+	type: 'GET',
+	data: input,
+	success: function( d ) {
+        var a = JSON.parse(d);
+        var i;
+        var ans = [];
+        for(i = 0; i < Object.keys(a).length; i++){
+            ans[i] = {"value" : a[Object.keys(a)[i]], "label": Object.keys(a)[i]};
+        }
+        console.log(ans);
+	    return ans;
+	}
+
+     });
+};
+
 function selectState(statePath) {
-    var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7,'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
+    //var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7,'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
     
-    $("#state" + (activeStates.indexOf(statePath) + 1)).append(makeDonutChart(data, 200, 200, 90, 35)).append(statePath.attr('id'));
+    //$("#state" + (activeStates.indexOf(statePath) + 1)).append(makeDonutChart(data, 200, 200, 90, 35)).append(statePath.attr('id'));
 
     statePath.css({
         'z-index': 2,
@@ -349,6 +371,10 @@ function selectState(statePath) {
     //$.post('/data/industry_counts/' + statePath.attr('id'), function (data) {
         //console.log(data);
     //});
+
+    console.log(state.getAttribute("id").slice(3));
+    var d = p(state.getAttribute("id").slice(3));
+    document.getElementById("chart").append(makeDonutChart( d,200, 200, 90, 35)[0]);
 }
 
 function deselectState(statePath) {
@@ -398,3 +424,4 @@ $('#heatmap path').each(function (i, statePath) {
         console.log(activeStates);
     });
 });
+

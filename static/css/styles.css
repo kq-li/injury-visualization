@@ -47,6 +47,10 @@ div {
     margin-bottom: 20px;
 }
 
+#title {
+    font-family: 'Palanquin Dark', sans-serif;
+}
+
 #compare-title {
     font-family: 'Palanquin Dark', sans-serif;
     text-align: center;
