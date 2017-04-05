@@ -20,31 +20,31 @@ def get_populations():
     reader = csv.reader(open('data/populations.csv'))
     return OrderedDict(map(lambda x: (x[0], int(x[1])), list(reader)[1:]))
 
-def get_injury_fractions():
-    counts = get_injury_counts()
-    populations = get_populations()
-
-    for state in states:
-        counts[state] = int(counts[state] * 10000000.0 / populations[state])
-
-    print counts
-        
-    return counts
-    
 def average(L):
     return sum(L) / len(L) if len(L) > 0 else 0
     
-def get_average_leave():
-    counts = OrderedDict([(state, []) for state in states])
+def get_average_days_away():
+    days_away = OrderedDict([(state, []) for state in states])
 
     for report in reports:
         state = report['address']['state']
 
         if state in states:
-            counts[state].append(report['statistics']['days away'])
+            days_away[state].append(report['statistics']['days away'])
 
-    for state in counts:
-        counts[state] = average(counts[state])
+    for state in days_away:
+        days_away[state] = average(days_away[state])
 
-    return counts
+    return days_away
 
+def get_state_industries(state):
+    percents = {}
+    
+    for report in reports:
+        if state == report['address']['state']:
+            try:
+                percents[report['industry']['division']] += 1
+            except:
+                percents[report['industry']['division']] = 1
+
+    return percents
