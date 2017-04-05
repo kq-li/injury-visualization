@@ -182,9 +182,6 @@ function makeDonutChart(data, width, height, radius, inner) {
     var chart = $('<div></div>').attr('class', 'donut');
     var color = d3.scale.category20c();
 
-    var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7, 'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
-    ;
-
     var total = d3.sum(data, function (d) {
         return d3.sum(d3.values(d));
     });
@@ -329,8 +326,9 @@ function unhoverState(state) {
 }
 
 function selectState(state) {
-    var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7,'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
-    document.getElementById("chart").append(makeDonutChart( data,200, 200, 90, 35)[0]);
+    console.log(state.getAttribute("id").slice(3));
+    var d = p(state.getAttribute("id").slice(3));
+    document.getElementById("chart").append(makeDonutChart( d,200, 200, 90, 35)[0]);
     state.style['z-index'] = 2;
     state.style['stroke-width'] = 3;
 }
@@ -371,7 +369,7 @@ $('#heatmap path').each(function (i, state) {
     });
 });
 
-function post(element, state) {
+function p(state) {
 
     var input = { 'text' : state};
 
@@ -380,13 +378,16 @@ function post(element, state) {
 	type: 'GET',
 	data: input,
 	success: function( d ) {
-	    makeDonutChart(JSON.parse(d), 300, 300, 150, 130);
+        var a = JSON.parse(d);
+        var i;
+        var ans = [];
+        for(i = 0; i < Object.keys(a).length; i++){
+            ans[i] = {"value" : a[Object.keys(a)[i]], "label": Object.keys(a)[i]};
+        }
+        console.log(ans);
+	    return ans;
 	}
 
      });
 };
 
-var i;
-for(i = 0 ; i < stateAbvs.length ; i++){
-    document.getElementById('US-' + stateAbvs[i]).addEventListener('click', post(document.getElementById('US-' + stateAbvs[i]), stateAbvs[i]));
-}

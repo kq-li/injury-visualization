@@ -31,7 +31,8 @@ def state_industries(state):
 @app.route("/state", methods = ["GET"])
 def post():
     data = request.args.get("text")
-    result = process.get_state_industries(data);   
+    result = process.get_state_industries(data)
+    print data
     return json.dumps(result)
     
 if __name__ == '__main__':
