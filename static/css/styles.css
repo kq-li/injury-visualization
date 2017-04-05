@@ -10,7 +10,7 @@ html, body {
 #heatmap {
     width: auto;
     height: auto;
-    margin-top: 12vh;
+    margin-top: 0vh;
     margin-left: 2vw;
     margin-right: 2vw;
     padding: 20px;
@@ -38,3 +38,37 @@ html, body {
     border-left:thin solid black
 }
 
+.slice path {
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+.textTop {
+    font-family: 'Segoe UI';
+    font-size: 12pt;
+    fill: #bbb;
+}
+
+.textBottom {
+    fill: #444;
+    font-family: 'Segoe UI';
+    font-weight: bold;
+    font-size: 18pt;
+}
+
+.top {
+    border: 1px solid #bbb;
+    color: #777;
+    font-family: 'Segoe UI';
+    padding: 5px;
+    text-decoration: none;
+}
+
+.top:hover {
+    border: 1px solid #555;
+    color: #333;
+}
+
+#compare{
+ 
+}
