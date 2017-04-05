@@ -123,7 +123,7 @@ function isSelected(state) {
 }
 
 function makeDonutChart(data, width, height, radius, inner) {
-    var chart = $('<div></div>').attr('id', 'tooltip-chart');
+    var chart = $('<div></div>').attr('class', 'donut');
     var color = d3.scale.category20c();
 
     var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7, 'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
@@ -134,26 +134,26 @@ function makeDonutChart(data, width, height, radius, inner) {
     });
 
     var vis = d3.select(chart[0])
-        .append("svg:svg")
+        .append('svg:svg')
         .data([data])
-        .attr("width", width)
-        .attr("height", height)
-        .append("svg:g")
-        .attr("transform", "translate(" + radius * 1.1 + "," + radius * 1.1 + ")")
+        .attr('width', width)
+        .attr('height', height)
+        .append('svg:g')
+        .attr('transform', 'translate(' + radius * 1.1 + ',' + radius * 1.1 + ')')
 
-    var textTop = vis.append("text")
-        .attr("dy", ".35em")
-        .style("text-anchor", "middle")
-        .attr("class", "textTop")
-        .text( "" )
-        .attr("y", -10);
+    var textTop = vis.append('text')
+        .attr('dy', '.35em')
+        .style('text-anchor', 'middle')
+        .attr('class', 'textTop')
+        .text( '' )
+        .attr('y', -10);
     
-    var textBottom = vis.append("text")
-        .attr("dy", ".35em")
-        .style("text-anchor", "middle")
-        .attr("class", "textBottom")
-        .text("")
-        .attr("y", 10);
+    var textBottom = vis.append('text')
+        .attr('dy', '.35em')
+        .style('text-anchor', 'middle')
+        .attr('class', 'textBottom')
+        .text('')
+        .attr('y', 10);
 
     var arc = d3.svg.arc()
         .innerRadius(inner)
@@ -168,61 +168,61 @@ function makeDonutChart(data, width, height, radius, inner) {
             return d.value * 100 / total;
         });
     
-    var arcs = vis.selectAll("g.slice")
+    var arcs = vis.selectAll('g.slice')
         .data(pie)
         .enter()
-        .append("svg:g")
-        .attr("class", "slice")
-        .on("mouseover", function (d) {
-            d3.select(this).select("path").transition()
+        .append('svg:g')
+        .attr('class', 'slice')
+        .on('mouseover', function (d) {
+            d3.select(this).select('path').transition()
                 .duration(200)
-                .attr("d", arcOver)
+                .attr('d', arcOver)
             
             textTop.text(d3.select(this).datum().data.label)
-                .attr("y", -10);
+                .attr('y', -10);
             textBottom.text((d3.select(this).datum().data.value*100/total).toFixed(2))
-                .attr("y", 10);
+                .attr('y', 10);
         })
-        .on("mouseout", function (d) {
-            d3.select(this).select("path").transition()
+        .on('mouseout', function (d) {
+            d3.select(this).select('path').transition()
                 .duration(100)
-                .attr("d", arc);
+                .attr('d', arc);
             
-            textTop.text( "" )
-                .attr("y", -10);
-            textBottom.text("");
+            textTop.text( '' )
+                .attr('y', -10);
+            textBottom.text('');
         });
 
-    arcs.append("svg:path")
-        .attr("fill", function (d, i) {
+    arcs.append('svg:path')
+        .attr('fill', function (d, i) {
             return color(i);
         })
-        .attr("d", arc);
+        .attr('d', arc);
 
-    var legend = d3.select(chart[0]).append("svg")
-        .attr("class", "legend")
-        .attr("width", radius * 2)
-        .attr("height", radius * 2)
-        .selectAll("g")
+    var legend = d3.select(chart[0]).append('svg')
+        .attr('class', 'legend')
+        .attr('width', radius * 2)
+        .attr('height', radius * 2)
+        .selectAll('g')
         .data(data)
-        .enter().append("g")
-        .attr("transform", function (d, i) {
-            return "translate(0," + i * 20 + ")";
+        .enter().append('g')
+        .attr('transform', function (d, i) {
+            return 'translate(0,' + i * 20 + ')';
         });
 
-    legend.append("rect")
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", function (d, i) {
+    legend.append('rect')
+        .attr('width', 18)
+        .attr('height', 18)
+        .style('fill', function (d, i) {
             return color(i);
         });
 
-    legend.append("text")
-        .attr("x", 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
+    legend.append('text')
+        .attr('x', 24)
+        .attr('y', 9)
+        .attr('dy', '.35em')
         .text(function (d) {
-            return d.label + " - " + (d.value * 100 / total).toFixed(2) + "%";
+            return d.label + ' - ' + (d.value * 100 / total).toFixed(2) + '%';
         });
 
     return chart;
@@ -251,30 +251,14 @@ function unhoverState(state) {
     tooltip.hide();
 }
 
-function selectLeftState(state) {
-    console.log('selected');
+function selectState(state) {
     state.style['z-index'] = 2;
     state.style['stroke-width'] = 3;
-    activeStates[0] = state;
 }
 
-function deselectLeftState(state) {
-    console.log('deselected');
+function deselectState(state) {
     state.style['z-index'] = 0;
     state.style['stroke-width'] = 1;
-    activeStates[0] = null;
-}
-
-function selectRightState(state) {
-    state.style['z-index'] = 2;
-    state.style['stroke-width'] = 3;
-    activeStates[1] = state;
-}
-
-function deselectRightState(state) {
-    state.style['z-index'] = 0;
-    state.style['stroke-width'] = 1;
-    activeStates[1] = null;
 }
 
 $('path').each(function (i, state) {
@@ -289,27 +273,23 @@ $('path').each(function (i, state) {
     });
 
     state.addEventListener('mousedown', function (e) {
-        console.log('click: ' + (e.offsetX + heatmapBBox.x) + ' ' + (e.offsetY + heatmapBBox.y));
         if (e.which == 1) {
             if (activeStates[0]) {
-                deselectLeftState(activeStates[0]);
+                deselectState(activeStates[0]);
             }
             
-            selectLeftState(this);
+            selectState(this);
+            activeStates[0] = this;
         } else if (e.which == 3) {
             if (activeStates[1]) {
-                deselectRightState(activeStates[1]);
+                deselectState(activeStates[1]);
             }
 
-            selectRightState(this);
+            selectState(this);
+            activeStates[1] = this;
         }
     });
 });
-
-
-
-
-
 
 function post(element, state) {
 
@@ -328,5 +308,5 @@ function post(element, state) {
 
 var i;
 for(i = 0 ; i < states.length ; i++){
-    document.getElementById("US-" + states[i]).addEventListener("click", post(document.getElementById("US-" + states[i]), states[i]));
+    document.getElementById('US-' + states[i]).addEventListener('click', post(document.getElementById('US-' + states[i]), states[i]));
 }
