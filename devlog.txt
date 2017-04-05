@@ -1,15 +1,26 @@
-dchiu-2016-04-04
+kli - 2017-04-04
+    Hovering and selecting fixed
+    Tooltip on hover added
+
+dchiu - 2016-04-04
 	autoscroll function scrapped
 	side panel added
 	css styling
 
-dchiu-2017-04-03
+dchiu - 2017-04-03
 	Set up navbar and additional layout
 	autoscroll function (no transition)
 
-dchiu-2017-04-02
+kli - 2017-04-03
+    Set up AJAX POST routes to fetch data
+    Set up backend data fetching
+    
+dchiu - 2017-04-02
 	Initial hover functions set up (not fully working)
 	Css styling
+
+kli - 2017-04-02
+    Fiddled with SVG some more - viewbox things
 	
 kli - 2017-03-30
     Set up SVG for heatmap
