@@ -90,10 +90,16 @@ div {
 
 #state1 {
     width: 100%;
+    padding: 20px;
 }
 
 #state2 {
     width: 100%;
+    padding: 20px;
+}
+
+.donut-title {
+    font-size: 24px;
 }
 
 .slice path {

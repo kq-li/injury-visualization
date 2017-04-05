@@ -14,7 +14,13 @@ var stateAbvs = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI
 
 var stateNames = ['Alaska', 'Alabama', 'Arkansas', 'Arizona', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Iowa', 'Idaho', 'Illinois', 'Indiana', 'Kansas', 'Kentucky', 'Louisiana', 'Massachusetts', 'Maryland', 'Maine', 'Michigan', 'Minnesota', 'Missouri', 'Mississippi', 'Montana', 'North Carolina', 'North Dakota', 'Nebraska', 'New Hampshire', 'New Jersey', 'New Mexico', 'Nevada', 'New York', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Virginia', 'Vermont', 'Washington', 'Wisconsin', 'West Virginia', 'Wyoming'];
 
-var stateChart = {'AK': 'Alaska', 'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DC': 'District of Columbia', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'IA': 'Iowa', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'MA': 'Massachusetts', 'MD': 'Maryland', 'ME': 'Maine', 'MI': 'Michigan', 'MN': 'Minnesota', 'MO': 'Missouri', 'MS': 'Mississippi', 'MT': 'Montana', 'NC': 'North Carolina', 'ND': 'North Dakota', 'NE': 'Nebraska', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NV': 'Nevada', 'NY': 'New York', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VA': 'Virginia', 'VT': 'Vermont', 'WA': 'Washington', 'WI': 'Wisconsin', 'WV': 'West Virginia', 'WY': 'Wyoming'};
+function getNameFromAbv(abv) {
+    return stateNames[stateAbvs.indexOf(abv)];
+}
+
+function getAbvFromName(name) {
+    return stateAbvs[stateNames.indexOf(name)];
+}
 
 var injuryCounts = [];
 var populations = [];
@@ -32,7 +38,7 @@ function fillHeatmap(counts) {
 
     var paths = d3.selectAll('path');
     paths.data(counts).style('fill', function (d) {
-        var lightness = 100 - 55 * d[1] / maxCount;
+        var lightness = 100 - 60 * d[1] / maxCount;
         return 'hsl(0, 100%,' + lightness + '%)';
     });
 }
@@ -75,30 +81,23 @@ $('#heatmap-data').change(function () {
 });
 
 $(document).ready(function () {
-    if (injuryFractions.length == 0) {
-        $.post('/data/injury_counts', function (injuryData) {
-            injuryCounts = JSON.parse(injuryData);
+    $.post('/data/injury_counts', function (injuryData) {
+        injuryCounts = JSON.parse(injuryData);
             
-            $.post('/data/populations', function (populationData) {
-                populations = JSON.parse(populationData);
+        $.post('/data/populations', function (populationData) {
+            populations = JSON.parse(populationData);
 
-                for (var i = 0; i < injuryCounts.length; i++) {
-                    injuryFractions.push(
-                        [injuryCounts[i][0],
-                         injuryCounts[i][1] * 10000000.0 / populations[i][1]]);
-                }
+            for (var i = 0; i < injuryCounts.length; i++) {
+                injuryFractions.push(
+                    [injuryCounts[i][0],
+                     injuryCounts[i][1] * 10000000.0 / populations[i][1]]);
+            }
 
-                fillHeatmap(injuryFractions);
+            $.post('/data/average_days_away', function (daysAwayData) {
+                daysAway = JSON.parse(daysAwayData);
             });
         });
-    }
-    
-    if (daysAway.length == 0) {
-        $.post('/data/average_days_away', function (daysAwayData) {
-            daysAway = JSON.parse(daysAwayData);
-            fillHeatmap(daysAway);
-        });
-    }
+    });
     
     loadHeatmap($('#heatmap-data').val());
 });
@@ -181,14 +180,20 @@ $('#heatmap').on('mousemove', function (e) {
 
 var activeStates = [null, null];
 
-function isSelected(statePath) {
-    return activeStates.indexOf(statePath) != -1;
+function isActive(state) {
+    return activeStates.indexOf(state) != -1;
+}
+
+function activePosition(state) {
+    return activeStates.indexOf(state);
 }
 
 function makeDonutChart(data, width, height, radius, inner) {
     var chart = $('<div></div>').attr('class', 'donut');
     var color = d3.scale.category20c();
 
+    console.log(data);
+    
     var total = d3.sum(data, function (d) {
         return d3.sum(d3.values(d));
     });
@@ -198,6 +203,7 @@ function makeDonutChart(data, width, height, radius, inner) {
         .data([data])
         .attr('width', width)
         .attr('height', height)
+        .attr('class', 'chart')
         .append('svg:g')
         .attr('transform', 'translate(' + radius * 1.1 + ',' + radius * 1.1 + ')')
 
@@ -212,8 +218,7 @@ function makeDonutChart(data, width, height, radius, inner) {
         .attr('dy', '.35em')
         .style('text-anchor', 'middle')
         .attr('class', 'textBottom')
-        .text('')
-        .attr('y', 10);
+        .text('');
 
     var arc = d3.svg.arc()
         .innerRadius(inner)
@@ -238,10 +243,9 @@ function makeDonutChart(data, width, height, radius, inner) {
                 .duration(200)
                 .attr('d', arcOver)
             
-            textTop.text(d3.select(this).datum().data.label)
-                .attr('y', -10);
+            //textTop.text(d3.select(this).datum().data.label)
+                //.attr('y', -10);
             textBottom.text((d3.select(this).datum().data.value*100/total).toFixed(2))
-                .attr('y', 10);
         })
         .on('mouseout', function (d) {
             d3.select(this).select('path').transition()
@@ -326,7 +330,7 @@ function hoverState(statePath) {
 }
 
 function unhoverState(statePath) {
-    if (!isSelected(statePath.attr('id'))) {
+    if (!isActive(statePath.attr('id'))) {
         statePath.css({
             'z-index': 0,
             'stroke-width': 1
@@ -336,49 +340,34 @@ function unhoverState(statePath) {
     tooltip.hide();
 }
 
-function p(state) {
-
-    var input = { 'text' : state};
-
-    $.ajax({
-	url: '/state',
-	type: 'GET',
-	data: input,
-	success: function( d ) {
-        var a = JSON.parse(d);
-        var i;
-        var ans = [];
-        for(i = 0; i < Object.keys(a).length; i++){
-            ans[i] = {"value" : a[Object.keys(a)[i]], "label": Object.keys(a)[i]};
-        }
-        console.log(ans);
-	    return ans;
-	}
-
-     });
-};
-
 function selectState(statePath) {
-    //var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7,'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
-    
-    //$("#state" + (activeStates.indexOf(statePath) + 1)).append(makeDonutChart(data, 200, 200, 90, 35)).append(statePath.attr('id'));
-
     statePath.css({
         'z-index': 2,
         'stroke-width': 3
     });
 
-    //$.post('/data/industry_counts/' + statePath.attr('id'), function (data) {
-        //console.log(data);
-    //});
+    $.post('/data/industry_counts/' + statePath.attr('id'), function (data) {
+        var counts = [];
 
-    console.log(state.getAttribute("id").slice(3));
-    var d = p(state.getAttribute("id").slice(3));
-    document.getElementById("chart").append(makeDonutChart( d,200, 200, 90, 35)[0]);
+        for (var x of JSON.parse(data)) {
+            counts.push({
+                'label': x[0],
+                'value': x[1]
+            });
+        }
+        
+        $('#state' + (activePosition(statePath.attr('id')) + 1))
+            .append($('<div></div>').text(getNameFromAbv(statePath.attr('id')))
+                    .attr('class', 'donut-title'))
+            .append(makeDonutChart(counts, 200, 200, 90, 35))
+        $('.legend').attr('width', $('.donut').width() - $('.chart').attr('width'));
+    });
 }
 
 function deselectState(statePath) {
-    $('#state' + (activeStates.indexOf(statePath) + 1)).text('').children().remove();
+    console.log('deselecting');
+    console.log(activePosition(statePath.attr('id')));
+    $('#state' + (activePosition(statePath.attr('id')) + 1)).text('').children().remove();
 
     statePath.css({
         'z-index': 0,
@@ -402,7 +391,7 @@ $('#heatmap path').each(function (i, statePath) {
         var activeState = activeStates[activeStateIndex];
         var otherStateIndex = (activeStateIndex + 1) % 2;
         var otherState = activeStates[otherStateIndex];
-        var index = activeStates.indexOf(statePath.attr('id'));
+        var index = activePosition(statePath.attr('id'));
 
         if (activeStateIndex == index) {
             deselectState(statePath);

@@ -2,7 +2,7 @@ import injuries
 import csv
 from collections import OrderedDict
 
-reports = injuries.get_reports(True)
+reports = injuries.get_reports()
 states = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY']
 
 def get_injury_counts():
@@ -42,9 +42,14 @@ def get_state_industries(state):
     
     for report in reports:
         if state == report['address']['state']:
-            try:
-                percents[report['industry']['division']] += 1
-            except:
-                percents[report['industry']['division']] = 1
+            label = report['industry']['division']
 
-    return percents
+            if len(label) > 50:
+                label = label[:label.rfind(' ', 0, 20)] + ' ...'
+            
+            try:
+                percents[label] += 1
+            except:
+                percents[label] = 1
+
+    return OrderedDict(percents)
