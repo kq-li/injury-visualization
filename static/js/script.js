@@ -1,3 +1,10 @@
+$('#container').outerHeight($(window).height()-$('#header').outerHeight(true));
+$('#compare').outerHeight($('#container').height() - $('#heatmap-data').outerHeight(true));
+$('#state1').outerHeight(($('#compare').height() - $('#compare-title').outerHeight(true)
+                          - $('<hr>').outerHeight(true)) / 2);
+$('#state2').outerHeight(($('#compare').height() - $('#compare-title').outerHeight(true)
+                          - $('<hr>').outerHeight(true)) / 2);
+
 var heatmap = $('#heatmap');
 var heatmapBBox = heatmap[0].getBBox();
 var viewBox = heatmapBBox.x + ' ' + heatmapBBox.y + ' ' + (heatmapBBox.width + 250) + ' ' + heatmapBBox.height;
