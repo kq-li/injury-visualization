@@ -174,8 +174,8 @@ $('#heatmap').on('mousemove', function (e) {
 
 var activeStates = [null, null];
 
-function isSelected(state) {
-    return activeStates.indexOf(state) != -1;
+function isSelected(statePath) {
+    return activeStates.indexOf(statePath) != -1;
 }
 
 function makeDonutChart(data, width, height, radius, inner) {
@@ -282,11 +282,12 @@ function makeDonutChart(data, width, height, radius, inner) {
 }
 
 function hoverState(statePath) {
-    console.log('hover' + statePath.getAttribute('id'));
-    statePath.style['z-index'] = 1;
-    statePath.style['stroke-width'] = 3;
+    statePath.css({
+        'z-index': 1,
+        'stroke-width': 3
+    });
 
-    var stateIndex = stateAbvs.indexOf(statePath.getAttribute('id').replace('US-', ''));
+    var stateIndex = stateAbvs.indexOf(statePath.attr('id').replace('US-', ''));
     var stateName = stateNames[stateIndex];
     var stateInjuries = injuryCounts[stateIndex][1];
     var statePopulation = populations[stateIndex][1];
@@ -317,78 +318,70 @@ function hoverState(statePath) {
     tooltip.show();
 }
 
-function unhoverState(state) {
-    console.log('unhover');
-    //console.log(state);
-    state.style['z-index'] = 0;
-    state.style['stroke-width'] = 1;
+function unhoverState(statePath) {
+    statePath.css({
+        'z-index': 0,
+        'stroke-width': 1
+    });
     tooltip.hide();
 }
 
-function selectState(state) {
-    state.style['z-index'] = 2;
-    state.style['stroke-width'] = 3;
+function selectState(statePath) {
+    statePath.css({
+        'z-index': 2,
+        'stroke-width': 3
+    });
+
+    $.post('/data/industry_counts/' + statePath.attr('id').replace('US-', ''), function (data) {
+        console.log(data);
+    });
 }
 
-function deselectState(state) {
-    state.style['z-index'] = 0;
-    state.style['stroke-width'] = 1;
+function deselectState(statePath) {
+    statePath.css({
+        'z-index': 0,
+        'stroke-width': 1
+    });
 }
 
-$('#heatmap path').each(function (i, state) {
-    state.addEventListener('mouseover', function (e) {
-        hoverState(this);
+$('#heatmap path').each(function (i, statePath) {
+    statePath = $(statePath);
+
+    console.log(statePath);
+    
+    statePath.on('mouseover', function (e) {
+        hoverState(statePath);
     });
     
-    state.addEventListener('mouseout', function (e) {
-        if (!isSelected(this)) {
-            unhoverState(this);
+    statePath.on('mouseout', function (e) {
+        if (!isSelected(statePath)) {
+            unhoverState(statePath);
         }
     });
 
-    state.addEventListener('mousedown', function (e) {
+    statePath.on('mousedown', function (e) {
         if (e.which == 1) {
-            if (this == activeStates[0]) {
+            if (statePath == activeStates[0]) {
                 deselectState(activeStates[0]);
             } else {
                 if (activeStates[0]) {
                     deselectState(activeStates[0]);
                 }
             
-                selectState(this);
-                activeStates[0] = this;
+                selectState(statePath);
+                activeStates[0] = statePath;
             }
         } else if (e.which == 3) {
-            if (this == activeStates[1]) {
+            if (statePath == activeStates[1]) {
                 deselectState(activeStates[1]);
             } else {
                 if (activeStates[1]) {
                     deselectState(activeStates[1]);
                 }
             
-                selectState(this);
-                activeStates[1] = this;
+                selectState(statePath);
+                activeStates[1] = statePath;
             }
         }
     });
 });
-
-function post(element, state) {
-
-    var input = { 'text' : state};
-
-    $.ajax({
-	url: '/state',
-	type: 'GET',
-	data: input,
-	success: function( d ) {
-	    makeDonutChart(JSON.parse(d), 300, 300, 150, 130);
-	}
-
-     });
-};
-
-var i;
-for(i = 0 ; i < stateAbvs.length ; i++){
-    document.getElementById('US-' + stateAbvs[i]).addEventListener('click', post(document.getElementById('US-' + stateAbvs[i]), stateAbvs[i]));
-}

@@ -25,15 +25,10 @@ def average_days_away():
 
 @app.route('/data/industry_counts/<state>', methods = ['POST'])
 def state_industries(state):
-    counts = process.get_industry_counts(state)
+    counts = process.get_state_industries(state)
+    print counts
     return json.dumps(counts.items())
 
-@app.route("/state", methods = ["GET"])
-def post():
-    data = request.args.get("text")
-    result = process.get_state_industries(data);   
-    return json.dumps(result)
-    
 if __name__ == '__main__':
     app.debug = True
     app.run()
