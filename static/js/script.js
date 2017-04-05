@@ -300,7 +300,7 @@ function post(element, state) {
 	type: 'GET',
 	data: input,
 	success: function( d ) {
-	    //input donut js here!!!!!!!!!
+	    makeDonutChart(JSON.parse(d), 300, 300, 150, 130);
 	}
 
      });
