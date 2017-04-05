@@ -41,24 +41,26 @@ body {
 }
 
 .land {
-    fill: #FFFFFF;
-    fill-opacity: 1;
+    fill: white;
     stroke: black;
-    stroke-opacity: 1;
     stroke-width: 1;
 }
 
-#tooltip {
+.tooltip-rect {
     stroke: black;
     stroke-width: 1;
     fill: white;
     padding: 5px;
 }
 
+.tooltip-state {
+    font-size: 24px;
+}
+
 #compare {
     padding-top:7vh;
     height:100vh;
-    border-left:thin solid black
+    border-left:thin solid black;
 }
 
 .slice path {
