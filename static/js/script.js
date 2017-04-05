@@ -1,6 +1,6 @@
 var heatmap = $('#heatmap');
 var heatmapBBox = heatmap[0].getBBox();
-var viewBox = heatmapBBox.x + ' ' + heatmapBBox.y + ' ' + heatmapBBox.width + ' ' + heatmapBBox.height;
+var viewBox = heatmapBBox.x + ' ' + heatmapBBox.y + ' ' + (heatmapBBox.width + 250) + ' ' + heatmapBBox.height;
 heatmap.attr('viewBox', viewBox);
 
 var stateAbvs = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
@@ -182,9 +182,6 @@ function makeDonutChart(data, width, height, radius, inner) {
     var chart = $('<div></div>').attr('class', 'donut');
     var color = d3.scale.category20c();
 
-    var data = [{'value': 11, 'label': 'Services'}, {'value': 23, 'label': 'Manufacturing'}, {'value': 7, 'label': 'Transportation'}, {'value': 2, 'label': 'Retail Trade'}, {'value': 2, 'label': 'Wholesale Trade'}]
-    ;
-
     var total = d3.sum(data, function (d) {
         return d3.sum(d3.values(d));
     });
@@ -351,19 +348,27 @@ $('#heatmap path').each(function (i, state) {
 
     state.addEventListener('mousedown', function (e) {
         if (e.which == 1) {
-            if (activeStates[0]) {
+            if (this == activeStates[0]) {
                 deselectState(activeStates[0]);
-            }
+            } else {
+                if (activeStates[0]) {
+                    deselectState(activeStates[0]);
+                }
             
-            selectState(this);
-            activeStates[0] = this;
-        } else if (e.which == 3) {
-            if (activeStates[1]) {
-                deselectState(activeStates[1]);
+                selectState(this);
+                activeStates[0] = this;
             }
-
-            selectState(this);
-            activeStates[1] = this;
+        } else if (e.which == 3) {
+            if (this == activeStates[1]) {
+                deselectState(activeStates[1]);
+            } else {
+                if (activeStates[1]) {
+                    deselectState(activeStates[1]);
+                }
+            
+                selectState(this);
+                activeStates[1] = this;
+            }
         }
     });
 });
